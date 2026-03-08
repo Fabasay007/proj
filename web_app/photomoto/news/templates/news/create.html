@@ -1,0 +1,19 @@
+{% extends 'main/layout.html' %}
+
+{% block title %}
+shit man!!!! duuude
+{% endblock%}
+
+{% block content %}
+    <div class=" features">
+       <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.title }}<br>
+        {{ form.annons }}<br>
+        {{ form.photo }}<br>
+       
+        <button class="btn btn-success" type = "submit">Добавить пост</button>
+
+       </form>
+    </div>
+{% endblock %}

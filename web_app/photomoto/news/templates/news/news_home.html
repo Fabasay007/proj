@@ -1,0 +1,32 @@
+{% extends 'main/layout.html' %}
+{% load static %}
+
+{% block title %}
+Новости
+{% endblock%}
+
+{% block content %}
+    <h1>НОВОСТИ</h1>
+    <aside>
+        <ul>
+            <li>
+                <a href="{% url 'create' %}">
+                    <button class="btn btn-info">
+                        <i class="fas fa-plus-circle"></i> Добавить запись
+                    </button>
+                </a>
+            </li>
+        </ul>
+    </aside>
+    {% if news %}
+        {% for post in news %}  
+            <h3>{{ post.title }}</h3>
+            {% if post.photo %}
+                <img src="{{ post.photo.url }}" alt="Изображение" class="post_image">
+            {% endif %}
+        </div>
+        {% endfor %}
+    {% else %}
+        <p>НЕТ НОВОСТЕЙ</p>
+    {% endif %}
+{% endblock %}
