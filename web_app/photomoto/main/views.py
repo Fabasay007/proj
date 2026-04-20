@@ -11,6 +11,8 @@ from django.contrib.auth import logout
 from django.contrib.auth import login
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from .models import Portfolio, PortfolioImage
+from .forms import AvatarForm
 def index(request):
     return render(request, 'main/index.html' )
 
@@ -47,3 +49,49 @@ class LoginUser( DataMixin, LoginView ):
 def logout_user(request):
     logout(request)
     return redirect('login')
+@login_required
+def personal_account(request):
+    if request.method == 'POST' and 'images' in request.FILES:
+        genre = request.POST.get('genre', 'portrait')
+        images = request.FILES.getlist('images')
+
+        for image in images:
+            PortfolioPhoto.objects.create(
+                user=request.user,
+                image=image,
+                genre=genre
+            )
+
+        return redirect('personal_account')
+
+    if request.method == 'POST' and 'avatar' in request.FILES:
+        request.user.avatar = request.FILES['avatar']
+        request.user.save()
+        return redirect('personal_account')
+
+    if request.method == 'POST' and 'delete_avatar' in request.POST:
+        if request.user.avatar:
+            request.user.avatar.delete()
+            request.user.avatar = None
+            request.user.save()
+        return redirect('personal_account')
+
+    photos = PortfolioPhoto.objects.filter(user=request.user)
+
+    photos_by_genre = defaultdict(list)
+    for photo in photos:
+        photos_by_genre[photo.genre].append(photo)
+
+    genre_names = {
+        'portrait': 'Портрет',
+        'landscape': 'Пейзаж',
+        'interior': 'Интерьер',
+        'reportage': 'Репортаж',
+    }
+
+    return render(request, 'main/personal_account.html', {
+        'photos': photos,
+        'photos_by_genre': dict(photos_by_genre),
+        'genre_names': genre_names,
+    })
+
