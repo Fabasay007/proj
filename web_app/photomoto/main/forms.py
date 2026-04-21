@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import CustomerUser
 from django.contrib.auth.forms import AuthenticationForm
+from .models import *
 
 class CustomerUserForm(UserCreationForm):
     avatar = forms.ImageField(required=False, label ='Аватарка')
@@ -35,3 +36,15 @@ class AvatarForm(forms.ModelForm):
         widgets = {
             'avatar': forms.FileInput(attrs={'class': 'avatar-input', 'accept': 'image/*'})
         }
+
+class Userresume(forms.ModelForm):
+    city = forms.CharField(required=True, label ='Города, где вы сможете работать')
+    style = forms.CharField(required=True, label ='Виды фотосессий, которыми вы занимаетесь')
+    class Meta:
+        model = CustomerUser
+        fields = ('city', 'style')
+
+class PortfolioPhotoForm(forms.ModelForm):
+    class Meta:
+        model = PortfolioPhoto
+        fields = ['image', 'genre']

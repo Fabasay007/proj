@@ -7,3 +7,5 @@ class CustomUserAdmin(UserAdmin):
     fieldsets = UserAdmin.fieldsets + (
         ('Дополнительные поля', {'fields': ('age', 'avatar', 'phone_number')}),
     )
+admin.site.register(Portfolio)
+admin.site.register(PortfolioImage)
