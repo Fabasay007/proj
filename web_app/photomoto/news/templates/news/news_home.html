@@ -5,8 +5,14 @@
 Новости
 {% endblock%}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'news/css/news_home.css' %}"> 
+{% endblock %}
+
 {% block content %}
+<div class="features">
     <h1>НОВОСТИ</h1>
+    
     <aside>
         <ul>
             <li>
@@ -18,8 +24,20 @@
             </li>
         </ul>
     </aside>
+    
     {% if news %}
         {% for post in news %}  
+        <div class="alert alert-warning">
+            <div class="post-header">
+                <div class="avatar-section">
+                    {% if post.author.avatar %}
+                        <img src="{{ post.author.avatar.url }}" alt="Аватар" class="avatar">
+                    {% else %}
+                        <img src="{% static 'main/images/default_avatar.png' %}" alt="Аватар по умолчанию" class="avatar">
+                    {% endif %}
+                </div>
+                <h5 class="username">{{ post.author.username }}</h5>
+            </div>
             <h3>{{ post.title }}</h3>
             {% if post.photo %}
                 <img src="{{ post.photo.url }}" alt="Изображение" class="post_image">
@@ -29,4 +47,5 @@
     {% else %}
         <p>НЕТ НОВОСТЕЙ</p>
     {% endif %}
+</div>
 {% endblock %}

@@ -1,0 +1,345 @@
+{% extends 'main/layout.html' %}
+{% load static %}
+
+{% block title %}
+Личный кабинет
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'main/css/personal_account.css' %}">
+{% endblock %}
+
+{% block mainmenu %}
+{% endblock mainmenu %}
+
+{% block content %}
+
+<div class="container">
+    <div class="site-header">
+        <h1 class="site-logo">PHOTOMOTO</h1>
+    </div>
+
+    <div class="profile-header">
+        <div class="avatar-section">
+            {% if user.avatar %}
+                <img src="{{ user.avatar.url }}" alt="Аватар пользователя" class="avatar" id="current-avatar">
+            {% else %}
+                <img src="{% static 'main/images/default_avatar.png' %}" alt="Аватар по умолчанию" class="avatar" id="current-avatar">
+            {% endif %}
+        </div>
+
+        <div class="user-info">
+            <h2 class="username">{{ user.username }}</h2>
+
+            <div class="resume-display">
+                {% if user.resume_city or user.resume_genres %}
+                    {% if user.resume_city %}
+                        <div class="info-line">
+                            <span class="info-label">📍 Город:</span>
+                            <span class="info-value">{{ user.resume_city }}</span>
+                        </div>
+                    {% endif %}
+
+                    {% if user.resume_genres %}
+                        <div class="info-line">
+                            <span class="info-label">📸 Жанры:</span>
+                            <span class="info-value">
+                                {% if 'portrait' in user.resume_genres %}Портрет {% endif %}
+                                {% if 'landscape' in user.resume_genres %}Пейзаж {% endif %}
+                                {% if 'interior' in user.resume_genres %}Интерьер {% endif %}
+                                {% if 'reportage' in user.resume_genres %}Репортаж {% endif %}
+                            </span>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <p class="no-resume-text">Резюме не заполнено</p>
+                {% endif %}
+            </div>
+
+            <div class="avatar-actions">
+                <button class="avatar-btn change-btn" id="showAvatarMenu">Изменить аватар</button>
+
+                <div class="avatar-dropdown" id="avatarDropdown">
+                    <form method="post" enctype="multipart/form-data" class="avatar-upload-form">
+                        {% csrf_token %}
+                        <label for="avatar-input" class="dropdown-item upload-item">
+                            <span>📸 Загрузить новое фото</span>
+                        </label>
+                        <input type="file" name="avatar" id="avatar-input" accept="image/*" style="display: none;">
+                    </form>
+
+                    {% if user.avatar %}
+                    <form method="post" class="avatar-delete-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="delete_avatar" value="1">
+                        <button type="submit" class="dropdown-item delete-item" onclick="return confirm('Удалить аватар?')">
+                            <span>🗑️ Удалить аватар</span>
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="resume-section">
+            <h2 class="resume-title">📋 Редактировать резюме</h2>
+
+            <form method="post" action="{% url 'update_resume' %}" class="resume-form" id="resumeForm">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="city">Город</label>
+                    <input type="text" id="city" name="city" class="form-control"
+                           placeholder="Например: Москва" value="{{ user.resume_city|default:'' }}">
+                </div>
+
+                <div class="form-group">
+                    <label>Жанры съемки</label>
+
+                    <div class="checkbox-group">
+                        <label class="checkbox-label-custom">
+                            <input type="checkbox" name="genres" value="portrait"
+                                   {% if 'portrait' in user.resume_genres %}checked{% endif %}>
+                            <span>📷 Портрет</span>
+                        </label>
+
+                        <label class="checkbox-label-custom">
+                            <input type="checkbox" name="genres" value="landscape"
+                                   {% if 'landscape' in user.resume_genres %}checked{% endif %}>
+                            <span>🏞️ Пейзаж</span>
+                        </label>
+
+                        <label class="checkbox-label-custom">
+                            <input type="checkbox" name="genres" value="interior"
+                                   {% if 'interior' in user.resume_genres %}checked{% endif %}>
+                            <span>🏠 Интерьер</span>
+                        </label>
+
+                        <label class="checkbox-label-custom">
+                            <input type="checkbox" name="genres" value="reportage"
+                                   {% if 'reportage' in user.resume_genres %}checked{% endif %}>
+                            <span>📸 Репортаж</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="save-resume-btn">Сохранить резюме</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="portfolio-section">
+        <div class="portfolio-header">
+            <h1>Мое портфолио</h1>
+
+            <form method="post" enctype="multipart/form-data" class="upload-form" id="uploadForm">
+                {% csrf_token %}
+
+                <select name="genre" class="genre-select" required>
+                    <option value="">Выберите жанр</option>
+                    <option value="portrait">Портрет</option>
+                    <option value="landscape">Пейзаж</option>
+                    <option value="interior">Интерьер</option>
+                    <option value="reportage">Репортаж</option>
+                </select>
+
+                <label for="images-input" class="upload-photo-btn">
+                    📷 Добавить фото
+                </label>
+
+                <input type="file" name="images" id="images-input" multiple accept="image/*" style="display: none;">
+            </form>
+        </div>
+
+        {% if photos %}
+        <div class="bulk-delete-bar">
+            <button id="selectAllBtn" class="select-btn">Выбрать все</button>
+            <button id="deleteSelectedBtn" class="bulk-delete-btn" disabled>🗑️ Удалить выбранные</button>
+            <span id="selectedCount" class="selected-count">Выбрано: 0</span>
+        </div>
+        {% endif %}
+
+        <hr>
+
+        {% if photos_by_genre %}
+            {% for genre, genre_photos in photos_by_genre.items %}
+                <div class="genre-block">
+                    <h2 class="genre-title">
+                        {% for key, value in genre_names.items %}
+                            {% if key == genre %}
+                                {{ value }}
+                            {% endif %}
+                        {% endfor %}
+                    </h2>
+
+                    <div class="slider">
+                        <button type="button" class="slider-btn prev">‹</button>
+
+                        <div class="slider-track">
+                            {% for photo in genre_photos %}
+                                <div class="slide">
+                                    <img src="{{ photo.image.url }}" alt="Фото">
+
+                                    <label class="photo-checkbox-label">
+                                        <input type="checkbox" class="photo-select" value="{{ photo.id }}">
+                                        Выбрать
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <button type="button" class="slider-btn next">›</button>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="no-photos">Нет фотографий</p>
+        {% endif %}
+    </div>
+</div>
+
+<form id="bulkDeleteForm" method="post" action="{% url 'bulk_delete_photos' %}" style="display: none;">
+    {% csrf_token %}
+    <input type="hidden" name="photo_ids" id="bulkPhotoIds">
+</form>
+
+<script>
+const avatarBtn = document.getElementById('showAvatarMenu');
+const avatarDropdown = document.getElementById('avatarDropdown');
+
+if (avatarBtn && avatarDropdown) {
+    avatarBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        avatarDropdown.classList.toggle('show');
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!avatarBtn.contains(e.target) && !avatarDropdown.contains(e.target)) {
+            avatarDropdown.classList.remove('show');
+        }
+    });
+}
+
+document.getElementById('avatar-input')?.addEventListener('change', function() {
+    this.closest('form').submit();
+});
+
+document.getElementById('images-input')?.addEventListener('change', function() {
+    const genreSelect = document.querySelector('.genre-select');
+
+    if (!genreSelect.value) {
+        alert('Сначала выберите жанр фото');
+        this.value = '';
+        return;
+    }
+
+    document.getElementById('uploadForm').submit();
+});
+
+const selectAllBtn = document.getElementById('selectAllBtn');
+const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
+const selectedCountSpan = document.getElementById('selectedCount');
+const bulkDeleteForm = document.getElementById('bulkDeleteForm');
+const bulkPhotoIds = document.getElementById('bulkPhotoIds');
+
+function getPhotoCheckboxes() {
+    return document.querySelectorAll('.photo-select');
+}
+
+function updateSelectedCount() {
+    const selected = document.querySelectorAll('.photo-select:checked');
+    const count = selected.length;
+
+    if (selectedCountSpan) {
+        selectedCountSpan.textContent = `Выбрано: ${count}`;
+    }
+
+    if (deleteSelectedBtn) {
+        deleteSelectedBtn.disabled = count === 0;
+    }
+
+    document.querySelectorAll('.slide').forEach(item => {
+        const checkbox = item.querySelector('.photo-select');
+
+        if (checkbox && checkbox.checked) {
+            item.classList.add('selected');
+        } else {
+            item.classList.remove('selected');
+        }
+    });
+}
+
+if (selectAllBtn) {
+    selectAllBtn.addEventListener('click', () => {
+        const photoCheckboxes = getPhotoCheckboxes();
+        const allChecked = Array.from(photoCheckboxes).every(cb => cb.checked);
+
+        photoCheckboxes.forEach(checkbox => {
+            checkbox.checked = !allChecked;
+        });
+
+        updateSelectedCount();
+    });
+}
+
+getPhotoCheckboxes().forEach(checkbox => {
+    checkbox.addEventListener('change', updateSelectedCount);
+});
+
+if (deleteSelectedBtn) {
+    deleteSelectedBtn.addEventListener('click', () => {
+        const selected = document.querySelectorAll('.photo-select:checked');
+
+        if (selected.length === 0) return;
+
+        const confirmed = confirm(`Удалить ${selected.length} фото?`);
+
+        if (confirmed) {
+            const ids = Array.from(selected).map(cb => cb.value);
+            bulkPhotoIds.value = ids.join(',');
+            bulkDeleteForm.submit();
+        }
+    });
+}
+
+updateSelectedCount();
+</script>
+
+<script>
+document.querySelectorAll('.slider').forEach(slider => {
+    const track = slider.querySelector('.slider-track');
+    const slides = slider.querySelectorAll('.slide');
+    const nextBtn = slider.querySelector('.next');
+    const prevBtn = slider.querySelector('.prev');
+
+    if (!track || slides.length === 0 || !nextBtn || !prevBtn) return;
+
+    let index = 0;
+
+    function updateSlider() {
+        track.style.transform = `translateX(-${index * 100}%)`;
+    }
+
+    nextBtn.addEventListener('click', () => {
+        index++;
+
+        if (index >= slides.length) {
+            index = 0;
+        }
+
+        updateSlider();
+    });
+
+    prevBtn.addEventListener('click', () => {
+        index--;
+
+        if (index < 0) {
+            index = slides.length - 1;
+        }
+
+        updateSlider();
+    });
+});
+</script>
+
+{% endblock %}
