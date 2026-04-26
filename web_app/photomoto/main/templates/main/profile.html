@@ -1,0 +1,213 @@
+{% extends 'main/layout.html' %}
+{% load static %}
+
+{% block title %}
+Профиль: {{ profile_user.username }}
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'main/css/user_profile.css' %}"> 
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="site-header">
+        <h1 class="site-logo">PHOTOMOTO</h1>
+    </div>
+
+    <div class="profile-header">
+        <div class="avatar-section">
+            {% if profile_user.avatar %}
+                <img src="{{ profile_user.avatar.url }}" alt="Аватар пользователя" class="avatar">
+            {% else %}
+                <img src="{% static 'main/images/default_avatar.png' %}" alt="Аватар по умолчанию" class="avatar">
+            {% endif %}
+        </div>
+
+        <div class="user-info">
+            <h2 class="username">{{ profile_user.username }}</h2>
+            
+            <div class="contacts-section">
+                <h3 class="contacts-title">📞 Контакты</h3>
+                <div class="contacts-info">
+                    <div class="contact-line">
+                        <span class="contact-label">📱 Телефон:</span>
+                        <span class="contact-value">
+                            {% if profile_user.phone_number %}
+                                {{ profile_user.phone_number }}
+                            {% else %}
+                                <span class="not-specified">Не указан</span>
+                            {% endif %}
+                        </span>
+                    </div>
+                    
+                    <div class="contact-line">
+                        <span class="contact-label">📧 Email:</span>
+                        <span class="contact-value">
+                            {% if profile_user.email %}
+                                {{ profile_user.email }}
+                            {% else %}
+                                <span class="not-specified">Не указан</span>
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="resume-display">
+                <h3 class="resume-subtitle">📋 О себе</h3>
+                {% if profile_user.resume_city or profile_user.resume_genres %}
+                    {% if profile_user.resume_city %}
+                        <div class="info-line">
+                            <span class="info-label">📍 Город:</span>
+                            <span class="info-value">{{ profile_user.resume_city }}</span>
+                        </div>
+                    {% endif %}
+                    {% if profile_user.resume_genres %}
+                        <div class="info-line">
+                            <span class="info-label">📸 Жанры:</span>
+                            <span class="info-value">
+                                {% if 'portrait' in profile_user.resume_genres %}Портрет {% endif %}
+                                {% if 'landscape' in profile_user.resume_genres %}Пейзаж {% endif %}
+                                {% if 'interior' in profile_user.resume_genres %}Интерьер {% endif %}
+                                {% if 'reportage' in profile_user.resume_genres %}Репортаж {% endif %}
+                            </span>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <p class="no-resume-text">Информация не заполнена</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="portfolio-section">
+        <div class="portfolio-header">
+            <h1>Портфолио</h1>
+        </div>
+
+        <hr>
+
+        
+        
+        <div class="portfolio-gallery">
+
+    {% if photos_by_genre %}
+
+        <div class="genre-selector">
+            <select id="genreSelect">
+
+    {% for genre, genre_photos in photos_by_genre.items %}
+
+        <option value="{{ genre }}">
+
+            {% if genre == 'portrait' %}
+                Портрет
+
+            {% elif genre == 'landscape' %}
+                Пейзаж
+
+            {% elif genre == 'interior' %}
+                Интерьер
+
+            {% elif genre == 'reportage' %}
+                Репортаж
+
+            {% endif %}
+
+        </option>
+
+    {% endfor %}
+
+</select>
+        </div>
+
+        {% for genre, genre_photos in photos_by_genre.items %}
+            <div class="genre-slider"
+                 data-genre="{{ genre }}"
+                 {% if not forloop.first %}style="display:none"{% endif %}>
+
+                <div class="slider">
+                    <button type="button" class="slider-btn prev">‹</button>
+
+                    <div class="slider-track">
+
+                        {% for photo in genre_photos %}
+                            <div class="slide">
+                                <img src="{{ photo.image.url }}" alt="">
+                            </div>
+                        {% endfor %}
+
+                    </div>
+
+                    <button type="button" class="slider-btn next">›</button>
+                </div>
+
+            </div>
+        {% endfor %}
+
+    {% else %}
+        <p class="no-photos">Нет фотографий</p>
+    {% endif %}
+
+</div>
+    </div>
+</div>
+
+<script>
+const genreSelect = document.getElementById('genreSelect');
+
+if (genreSelect) {
+    genreSelect.addEventListener('change', function() {
+
+        document.querySelectorAll('.genre-slider')
+            .forEach(slider => {
+                slider.style.display = 'none';
+            });
+
+        const active = document.querySelector(
+            `[data-genre="${this.value}"]`
+        );
+
+        if (active) {
+            active.style.display = 'block';
+        }
+    });
+}
+
+document.querySelectorAll('.slider').forEach(slider => {
+
+    const track = slider.querySelector('.slider-track');
+    const slides = slider.querySelectorAll('.slide');
+
+    let index = 0;
+
+    slider.querySelector('.next')
+        .addEventListener('click', () => {
+
+            index++;
+
+            if (index >= slides.length) {
+                index = 0;
+            }
+
+            track.style.transform =
+                `translateX(-${index * 100}%)`;
+        });
+
+    slider.querySelector('.prev')
+        .addEventListener('click', () => {
+
+            index--;
+
+            if (index < 0) {
+                index = slides.length - 1;
+            }
+
+            track.style.transform =
+                `translateX(-${index * 100}%)`;
+        });
+});
+</script>
+{% endblock %}

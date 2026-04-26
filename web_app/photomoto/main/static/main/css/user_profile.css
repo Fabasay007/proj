@@ -1,0 +1,311 @@
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.site-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.site-logo {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.profile-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 30px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.avatar-section {
+    flex-shrink: 0;
+}
+
+.avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #3498db;
+}
+
+.user-info {
+    flex: 1;
+    min-width: 300px;
+}
+
+.username {
+    font-size: 1.8rem;
+    margin: 0 0 15px 0;
+    color: #2c3e50;
+}
+
+.contacts-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.contacts-title {
+    font-size: 1.1rem;
+    margin: 0 0 10px 0;
+    color: white;
+}
+
+.contacts-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.contact-line {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    background: rgba(255,255,255,0.2);
+    padding: 8px 12px;
+    border-radius: 8px;
+}
+
+.contact-label {
+    font-weight: bold;
+    color: white;
+    min-width: 80px;
+}
+
+.contact-value {
+    color: white;
+    margin-left: 5px;
+}
+
+.contact-value.not-specified {
+    color: rgba(255,255,255,0.7);
+    font-style: italic;
+}
+
+.resume-display {
+    background: #f8f9fa;
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.resume-subtitle {
+    font-size: 1.1rem;
+    margin: 0 0 10px 0;
+    color: #2c3e50;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 5px;
+    display: inline-block;
+}
+
+.info-line {
+    margin: 10px 0;
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+}
+
+.info-label {
+    font-weight: bold;
+    color: #555;
+    min-width: 70px;
+}
+
+.info-value {
+    color: #333;
+    margin-left: 5px;
+}
+
+.no-resume-text {
+    color: #999;
+    font-style: italic;
+    margin: 5px 0;
+}
+
+.portfolio-section {
+    margin-top: 40px;
+}
+
+.portfolio-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.portfolio-header h1 {
+    color: #2c3e50;
+    margin: 0;
+}
+
+hr {
+    margin: 20px 0;
+    border: none;
+    height: 2px;
+    background: linear-gradient(to right, #3498db, transparent);
+}
+
+.portfolio-section h2 {
+    color: #2c3e50;
+    margin: 20px 0;
+}
+
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.photo-item {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+}
+
+.photo-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.photo-item img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    display: block;
+}
+
+.no-photos {
+    text-align: center;
+    color: #999;
+    padding: 60px;
+    font-size: 1.2rem;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    
+    .profile-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 20px;
+    }
+    
+    .user-info {
+        text-align: center;
+    }
+    
+    .info-line, .contact-line {
+        justify-content: center;
+    }
+    
+    .contact-line {
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .contact-label {
+        min-width: auto;
+    }
+    
+    .info-line {
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .info-label {
+        min-width: auto;
+    }
+    
+    .gallery {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 15px;
+    }
+    
+    .photo-item img {
+        height: 150px;
+    }
+    
+    .site-logo {
+        font-size: 1.8rem;
+    }
+    
+    .username {
+        font-size: 1.5rem;
+    }
+}
+.genre-selector {
+    margin-bottom: 25px;
+}
+
+.genre-selector select {
+    padding: 12px 18px;
+    font-size: 18px;
+    border-radius: 10px;
+}
+
+.slider {
+    width: 100%;
+    max-width: 900px;
+    height: 600px;
+    margin: 0 auto;
+    overflow: hidden;
+    position: relative;
+}
+
+.slider-track {
+    display: flex;
+    transition: transform .4s ease;
+    height: 100%;
+}
+
+.slide {
+    min-width: 100%;
+    height: 100%;
+}
+
+.slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.slider-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+    width: 50px;
+    height: 70px;
+    border: none;
+    cursor: pointer;
+    font-size: 35px;
+}
+
+.prev {
+    left: 10px;
+}
+
+.next {
+    right: 10px;
+}
