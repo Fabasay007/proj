@@ -1,0 +1,56 @@
+.photographers-page {
+    max-width: 1400px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.search-form {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 40px;
+}
+
+.search-form select,
+.search-form input {
+    padding: 12px;
+    font-size: 16px;
+}
+
+.search-form button {
+    padding: 12px 25px;
+    border: none;
+    background: #3b82f6;
+    color: white;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+.users-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(350px,1fr));
+    gap: 25px;
+}
+
+.user-card {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 3px 12px rgba(0,0,0,.1);
+}
+
+.user-avatar {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.profile-btn {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 15px;
+    background: #3b82f6;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+}

@@ -1,11 +1,107 @@
 {% extends 'main/layout.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'main/css/index.css' %}">
+{% endblock %}
 
 {% block title %}
-shit man!!!! duuude
-{% endblock%}
-
-
+Поиск фотографов
+{% endblock %}
 
 {% block content %}
-<h1>TRALLALALALALLLALAL</h1>
+
+<div class="photographers-page">
+
+    <h1>Поиск фотографов</h1>
+
+    <form method="get" class="search-form">
+
+        <select name="genre">
+            <option value="">Все жанры</option>
+
+            <option value="portrait"
+                {% if selected_genre == 'portrait' %}selected{% endif %}>
+                Портрет
+            </option>
+
+            <option value="landscape"
+                {% if selected_genre == 'landscape' %}selected{% endif %}>
+                Пейзаж
+            </option>
+
+            <option value="interior"
+                {% if selected_genre == 'interior' %}selected{% endif %}>
+                Интерьер
+            </option>
+
+            <option value="reportage"
+                {% if selected_genre == 'reportage' %}selected{% endif %}>
+                Репортаж
+            </option>
+
+        </select>
+
+        <input
+            type="text"
+            name="city"
+            placeholder="Введите город"
+            value="{{ selected_city }}"
+        >
+
+        <button type="submit">
+            Найти
+        </button>
+
+    </form>
+
+    <div class="users-grid">
+
+        {% for user in users %}
+
+        <div class="user-card">
+
+            {% if user.avatar %}
+                <img src="{{ user.avatar.url }}" class="user-avatar">
+            {% else %}
+                <img src="{% static 'main/images/default_avatar.png' %}" class="user-avatar">
+            {% endif %}
+
+            <h3>{{ user.username }}</h3>
+
+            <p>
+                <strong>Город:</strong>
+                {{ user.resume_city }}
+            </p>
+
+            <p>
+                <strong>Телефон:</strong>
+                {{ user.phone_number }}
+            </p>
+
+            <p>
+                <strong>Email:</strong>
+                {{ user.email }}
+            </p>
+
+            <p>
+                <strong>Жанры:</strong>
+                 {{ user.genres_ru }}
+            </p>
+                <a href="{% url 'profile' user.id %}" class="profile-btn">
+                    Перейти в профиль
+                </a>
+
+        </div>
+
+        {% empty %}
+
+        <h2>Ничего не найдено</h2>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
 {% endblock %}
